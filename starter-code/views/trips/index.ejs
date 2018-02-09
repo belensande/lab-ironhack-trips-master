@@ -1,4 +1,40 @@
-<div class="content">
-
-
+<div class="container">
+	<div class="trip-row row">
+		<h3 class="text-center">Your trips</h3>
+		<% trips.forEach((trip) => { %>
+		  <div class="col-sm-3">
+			  <div class="home-trip-box text-center">
+				<div class="img-container">
+					<img class="img-thumbnail" src="<%= trip.pic_path %>">
+				</div>
+				<div class="trip-info-wrapper">
+				  <strong class="title"><%= trip.destination %></strong>
+				  <br>
+				  <span class="light-text description"><%= trip.description %></span>
+				</div>
+			  </div>
+			  <div class="text-center">
+				<a href="/my-trips/edit/<%= trip._id %>"><small>Edit</small></a>
+				<small> | </small>
+				<a href="#confirmation-delete-<%= trip._id %>" data-toggle="modal" data-target="#confirmation-delete-<%= trip._id %>"><small>Delete</small></a>
+			  </div>
+		  </div>
+		  <div class="modal fade" role="dialog" id="confirmation-delete-<%= trip._id %>">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body">
+						<span>Are you sure you want to delete your trip <%= trip.destination %>?</span>
+					</div>
+					<div class="modal-footer buttons-inline">
+						<form action="/my-trips/delete/<%= trip._id %>" method="POST">
+							<button type="submit" class="btn btn-default">Yes</button>
+						</form>
+						<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+					</div>
+				</div>
+			</div>
+		  </div>
+		<%  }) %>
+	</div>
+	<br></br>
 </div

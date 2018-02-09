@@ -1,0 +1,25 @@
+<div class="container">
+	<form action="/my-trips/edit/<%= trip._id %>" method="post" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="destination" class="control-label">Destination</label>
+			<input type="text" id="destination" name="destination" class="form-control" value="<%= trip.destination %>"/>
+		</div>
+		<div class="form-group">
+			<label for="description" class="control-label">Description</label>
+			<textarea id="description" name="description" class="form-control" rows="10"><%= trip.description %></textarea>
+		</div>
+		<div class="form-group">
+      <img class="img-thumbnail" src="<%= trip.pic_path %>" />
+      <br></br>
+      <label for="photo" class="control-label">Change image</label>
+			<input type="file" name="photo" id="photo" class="form-control">
+		</div>
+		<% if(locals.errorMessage) { %>
+			<div class="alert alert-danger" role="alert">
+				<%= errorMessage %>
+			</div>
+		<% } %>
+		<button type="submit" class="btn btn-primary">Save</button>
+    <br></br>
+	</form>
+</div>

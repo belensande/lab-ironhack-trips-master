@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="trip-row row">
+    <h3 class="text-center">
+      <%= user.provider_name %> trips
+    </h3>
+    <% trips.forEach((trip) => { %>
+    <div class="col-sm-3">
+      <div class="home-trip-box text-center">
+        <div class="img-container">
+          <img class="img-thumbnail" src="<%= trip.pic_path %>">
+        </div>
+        <div class="trip-info-wrapper">
+          <a href="/profiles/<%= user.provider_id %>/show/<%= trip._id %>">
+            <strong class="title">
+              <%= trip.destination %>
+            </strong>
+          </a>
+          <br>
+            <span class="light-text description">
+              <%= trip.description %>
+            </span>
+          </div>
+      </div>
+    </div>
+    <%  }) %>
+  </div>
+  <br></br>
+</div>

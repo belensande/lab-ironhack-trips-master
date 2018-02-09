@@ -7,13 +7,17 @@ const cookieParser   = require("cookie-parser");
 const bodyParser     = require("body-parser");
 const mongoose       = require("mongoose");
 const passport		 = require("passport");
+const flash			 = require("connect-flash");
 const FbStrategy	 = require('passport-facebook').Strategy;
+const LocalStrategy  = require("passport-local").Strategy;
 const User			 = require("./models/user");
 const app            = express();
 
 // Controllers
 const authController = require("./routes/authController");
 const indexController = require("./routes/indexController");
+const tripsController = require("./routes/tripsController");
+const profilesController = require("./routes/profilesController");
 
 // Mongoose configuration
 mongoose.connect("mongodb://localhost:27017/ironhack-trips");
@@ -31,53 +35,34 @@ app.use(express.static(path.join(__dirname, "public")));
 // Access POST params with body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Authentication
 app.use(session({
-  secret: "ironhack trips"
-}));
-app.use(cookieParser());
-
-passport.use(new FbStrategy({
-	clientID: "1925251437804257",
-	clientSecret: "dd94e7ca262443656dcf0e7459025f0d",
-	callbackURL: "/auth/facebook/callback"
-}, (accessToken, refreshToken, profile, done) => {
-	User.findOne({ provider_id: profile.id }, (err, user) => {
-		if (err) {
-			return done(err);
-		}
-		if (user) {
-			return done(null, user);
-		}
-
-		const newUser = new User({
-			provider_id: profile.id,
-			provider_name: profile.displayName
-		});
-
-		newUser.save((err) => {
-			if (err) {
-				return done(err);
-			}
-			done(null, newUser);
-		});
-	});
-
+	secret: "ironhack trips",
+	cookie: { maxAge: 300000 },
+	resave: true,
+	saveUninitialized: true
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+require('./passport')(app);
+app.use(flash());
+
+app.use((req, res, next) => {
+	if (req.isAuthenticated()) {
+		res.locals.currentUser = req.user;
+	}
+	res.locals.route = req.originalUrl;
+	next();
+});
 
 // Routes
 app.use("/", indexController);
-app.use("/", authController);
+app.use("/auth", authController);
+app.use("/my-trips", tripsController);
+app.use("/profiles", profilesController);
 
-app.use("/", (req, res, next) => {
-	if (req.isAuthenticated()) {
-		res.locals.currenUser = req.user;
-	}
-});
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
